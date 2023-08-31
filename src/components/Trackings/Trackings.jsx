@@ -8,7 +8,7 @@ import { useState, useEffect } from 'react'
 function Trackings() {
 
     const [idOrder, setIdOrder] = useState('')
-    const [data, setData] = useState([])
+    const [data, setData] = useState({ filteredTrackings: [] })
     const [value, setValue] = useState('')
     const [error, setError] = useState(null)
     const [loading, setLoading] = useState(false)
@@ -47,7 +47,9 @@ function Trackings() {
             }
             return false;
         });
-        return filteredTrackings;
+        return {
+            filteredTrackings,
+        }
     }
 
     useEffect(() => {
@@ -68,7 +70,7 @@ function Trackings() {
                     const response = await fetch(`https://api-core-shopstar.azure-api.net/sales/orders/view/${idOrder}`, requestOptions);
                     const dataApi = await response.json();
                     console.log('TRACKINGS: ', dataApi.trackings)
-                    let dataFilter = await filterAndRemoveDuplicates(dataApi.trackings)
+                    let dataFilter = filterAndRemoveDuplicates(dataApi.trackings)
                     dataFilter = {
                         ...dataFilter,
                         orderReferenceNumber: idOrder
@@ -89,13 +91,13 @@ function Trackings() {
     }, [idOrder])
 
     const isTrackingActive = (dataIndex) => {
-        const dataIndexValid = dataIndex >= 0 && dataIndex < data.length;
+        const dataIndexValid = dataIndex >= 0 && dataIndex < data.filteredTrackings.length;
 
         if (!dataIndexValid) {
             return false;
         }
 
-        const trackingData = data[dataIndex];
+        const trackingData = data.filteredTrackings[dataIndex];
         const isCompleted = trackingData.completed;
 
         return isCompleted;
@@ -128,14 +130,14 @@ function Trackings() {
                     loading ? (<Loader />) 
                     : 
                         (
-                            error ? <Message msg={error} bgColor='#e74c3c' /> : data.length > 0 && (
+                            error ? <Message msg={error} bgColor='#e74c3c' /> : data.filteredTrackings.length > 0 && (
                                 <>
                                     <h2>{data.orderReferenceNumber}</h2>
                                     <h2 className='flujoPedidosProfile_progressbar_sbtitleTrackings'>Estado del pedido</h2>
                                     <ul className='flujoPedidosProfile_progressbar'>
                                         <li className={`flujoPedidosProfile_progressbar_bullet ${isTrackingActive(4) ? 'red' : isTrackingActive(0) ? 'active' : ''}`}>
                                             <span className={`flujoPedidosProfile_progressbar_text`}>Pedido Registrado</span>
-                                            <span>{formatDate(data[0].createdOn)}</span>
+                                            <span>{formatDate(data.filteredTrackings[0].createdOn)}</span>
                                         </li>
                                         <li className={`flujoPedidosProfile_progressbar_bullet ${isTrackingActive(4) ? 'red' : isTrackingActive(1) ? 'active' : ''}`}>
                                             <span className='flujoPedidosProfile_progressbar_text'>Pedido Confirmado</span>

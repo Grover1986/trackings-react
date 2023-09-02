@@ -1,19 +1,37 @@
 .flujoPedidosProfile_progressbar_wrap {
+    text-align: center;
     height: 100%;
     padding: 60px;
+    background: #F7F8F8;
 }
-.flujoPedidosProfile_progressbar_title {
-    text-align: center;
-    margin-bottom: 3rem;
+/* .flujoPedidosProfile_progressbar_title {
+    margin-bottom: 2rem;
+} */
+.flujoPedidosProfile_progressbar_titleIcon {
+    max-width: max-content;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 1rem;
+}
+.flujoPedidosProfile_progressbar_titleIconImg {
+    width: 100%;
 }
 .flujoPedidosProfile_progressbar_titleText {
-    text-transform: uppercase;
     margin-top: 5px;
     margin-bottom: 14px;
-    font-weight: 500;
+    color: #009FE3;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 32px;
+    letter-spacing: -1px;
 }
 .flujoPedidosProfile_progressbar_parrText {
     margin-top: 0;
+    margin-bottom: .5rem;
+    color: #878C8F;
+    font-weight: 400;
+    line-height: 20px;
+    letter-spacing: -0.1px;
 }
 .flujoPedidosProfile_progressbar_text {
     font-size: 14px;
@@ -21,7 +39,7 @@
     height: 40px;
 }
 .flujoPedidosProfile_searchWrap {
-    background-color: rgba(74,38,127, .2);
+    /* background-color: rgba(74,38,127, .2); */
     max-width: 910px;
     width: 100%;
     margin-left: auto;
@@ -33,28 +51,29 @@
     max-width: 600px;
     width: 100%;
     margin: auto;
-    height: 40px;
     font-family: 'Rubik';
-    font-size: 16px;
 }
 .flujoPedidosProfile_search .flujoPedidosProfile_search_input {
-    height: 100%;
     width: 80%;
-    padding: 10px;
+    padding: 10px 12px 10px 20px;
     outline: none;
     color: #0F191E;
-    font-weight: 400;
+    font-weight: 500;
+    font-size: 16px;
     line-height: 20px;
     letter-spacing: -0.001em;
     border: none;
+    border-radius: 4px 0 0 4px;
+    border: 1px solid #D9DADB;
 }
 .flujoPedidosProfile_search .flujoPedidosProfile_search_input::placeholder {
-    font-weight: 600;
+    font-weight: 500;
     line-height: 20px;
-    letter-spacing: -0.001em;
-    color: #474747;    
+    letter-spacing: -0.016px;
+    color: #B7BABC;    
 }
 .flujoPedidosProfile_search_btn {
+    font-size: 16px;
     cursor: pointer;
     border-radius: 0 4px 4px 0;
     border: none;
@@ -65,14 +84,25 @@
     padding: 10px;
 }
 .flujoPedidosProfile_progressbar_content {
-    text-align: center;
+    display: flex;
+    max-width: 1200px;
+    justify-content: space-between;
+    margin: auto;
+    background-color: #fff;
 }
-.flujoPedidosProfile_progressbar_sbtitleTrackings {
-    text-align: center;
-    text-transform: uppercase;
-    font-weight: 400;
-    letter-spacing: 1px;
-    margin-bottom: 3rem;
+.lujoPedidosProfile_progressbar_contentDetails {
+    width: 40%;
+}
+.lujoPedidosProfile_progressbar_contentDetails::after {
+    content: '';
+    display: block;
+    width: 1px;
+    height: 100%;
+    background-color: #D9DADB;
+}
+.lujoPedidosProfile_progressbar_contentTracking {
+    width: 60%;
+    padding: 0 60px;
 }
 .flujoPedidosProfile_progressbar {
     display: flex;
@@ -80,11 +110,10 @@
     padding: 0;
 }
 .flujoPedidosProfile_progressbar_bullet {
+    position: relative;
     list-style-type: none;
-    width: 16%;
-    position: relative;
+    width: 100%;
     text-align: center;
-    position: relative;
 }
 .flujoPedidosProfile_progressbar_bullet::before {
     content: '';
@@ -96,7 +125,7 @@
     background-color: #7d7d7d;
     display: block;
     text-align: center;
-    margin: 0 auto 25px auto;
+    margin: auto;
     border-radius: 50%;
     transition: all .8s;
     position: relative;
@@ -105,26 +134,26 @@
 .flujoPedidosProfile_progressbar_bullet::after {
     content: '';
     width: 100%;
-    height: 2px;
+    height: 7px;
     position: absolute;
     background-color: #7d7d7d;
-    top: 9px;
-    left: -50%;
+    top: 7px;
+    left: 0;
     /* z-index: -1; */
     transition: all .8s;
 }
 .flujoPedidosProfile_progressbar_bullet.active:before {
-    border-color: #8bc34a;
-    background-color: #8bc34a;
+    border-color: #009FE3;
+    background-color: #009FE3;
     transition: all .8s;
   }
 
 .flujoPedidosProfile_progressbar_bullet.active:after {
-    background-color: #8bc34a;
+    background-color: #009FE3;
     transition: all .8s;
   }
 .flujoPedidosProfile_progressbar_bullet:nth-child(1)::after {
-    display: none;
+    /* display: none; */
 }
 .flujoPedidosProfile_progressbar_bullet.red:before {
     border-color: red;
@@ -137,11 +166,12 @@
     width: 100px;
     display: block;
     line-height: 1.3;
-    margin-left: auto;
-    margin-right: auto;
+    text-align: center;
+    margin: auto;
 }
 .flujoPedidosProfile__frm {
     display: flex;
+    height: 48px;
 }
 
 @media screen and (max-width: 600px) {
@@ -188,6 +218,7 @@
         width: auto;
         margin-bottom: 1rem;
     }
+    .flujoPedidosProfile_search .flujoPedidosProfile_search_input,
     .flujoPedidosProfile_search_btn {
         border-radius: 4px;
     }

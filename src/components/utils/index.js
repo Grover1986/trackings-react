@@ -2,8 +2,24 @@ export function formatDate(fecha) {
     const objectDate = new Date(fecha);
 
     const day = objectDate.getDate();
-    const month = objectDate.getMonth() + 1; // Los meses van de 0 a 11, por lo que sumamos 1
-    const year = objectDate.getFullYear();
+    const monthNames = [
+        "Enero",
+        "Febrero",
+        "Marzo",
+        "Abril",
+        "Mayo",
+        "Junio",
+        "Julio",
+        "Agosto",
+        "Septiembre",
+        "Octubre",
+        "Noviembre",
+        "Diciembre"
+    ];
+    const month = monthNames[objectDate.getMonth()];
 
-    return `${day}/${month}/${year}`;
+    // Usar un operador ternario para agregar un "0" cuando day sea menor que 10
+    const formattedDay = day < 10 ? `0${day}` : day;
+
+    return `${formattedDay} ${month}`;
 }

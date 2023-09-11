@@ -3,7 +3,6 @@ import { formatDate } from '../utils'
 import { Loader } from '../Loader/Loader'
 import { Message } from '../Message'
 import { useState, useEffect } from 'react'
-// const regex = new RegExp(/\d{1,}-\d{2}/g)
 
 function Trackings() {
 
@@ -12,6 +11,7 @@ function Trackings() {
     const [value, setValue] = useState('')
     const [error, setError] = useState(null)
     const [loading, setLoading] = useState(false)
+    const [isCancelled, setIsCancelled] = useState(false)
 
     // esta función cambia de valor el value del Input
     const handleSearchChange = (event) => {
@@ -22,7 +22,7 @@ function Trackings() {
 
     const handleSubmit = (event) => {
         event.preventDefault()
-
+ 
         if (value.trim() === '') {
             console.log('NO hay datos')
             setError('El campo no puede estar vacío')
@@ -41,18 +41,49 @@ function Trackings() {
         setIdOrder(trimmedValue);
     }
 
-    function filterAndRemoveDuplicates(trackings) {
+    function filterAndRemoveDuplicates(trackings, isPickup, isDelivery) {
+        setIsCancelled(false)
         const filteredTrackings = trackings.filter((tracking, index, self) => {
+            if(!isPickup && tracking.trackingTypeName === 'ReadyToPickUp') return false;
+            if(isPickup && tracking.trackingTypeName === 'InTransit') return false;
+            if(isDelivery && tracking.trackingTypeName === 'InProgress') return false;
+
             // Filtrar los elementos con title diferente de "Envío correo"
-            if (tracking.title !== "Envío correo" && tracking.title !== "En preparación") {
+            if (tracking.title !== "Envío correo" && tracking.title !== "En preparación" && tracking.title !== "Pedido rechazado") {
                 // Verificar si el elemento actual es el primer duplicado de title
                 const firstIndex = self.findIndex((t) => t.title === tracking.title);
-                return index === firstIndex;
+                let isFiltered = index === firstIndex;
+                if(isFiltered && tracking.trackingTypeName === 'Cancelled') setIsCancelled(true)
+                return isFiltered;
             }
             return false;
         });
+
+        filteredTrackings.sort((a, b) => {
+            // Si el título de 'a' es 'Pedido cancelado', colócalo al final.
+            if (a.title === 'Pedido cancelado') return 1;
+            // Si el título de 'b' es 'Pedido cancelado', colócalo al principio.
+            if (b.title === 'Pedido cancelado') return -1;
+            // En otros casos, mantén el orden original.
+            return 0;
+        });
+
+        const map = {
+            9: "Pedido Registrado",
+            1: "Pedido Confirmado",
+            5: "Pedido Entregado",
+            3: "Pedido Listo para Recoger",
+            4: "Pedido Cancelado",
+            2: (type) => {
+                return type ? "Pedido en Camino" : "Pedido Listo para Recoger" 
+            }
+          }
+          console.log('filteredTrackings',filteredTrackings)
         return {
-            filteredTrackings,
+            filteredTrackings: filteredTrackings.map((tracking) => ({
+                ...tracking,
+                title: typeof map[tracking.trackingType] === "string" ? map[tracking.trackingType] : map[tracking.trackingType](isDelivery)
+            }))
         }
     }
 
@@ -75,7 +106,8 @@ function Trackings() {
                     const dataApi = await response.json();
                     console.log('DATA GENERAL: ', dataApi)
                     console.log('TRACKINGS: ', dataApi[0].trackings)
-                    let dataFilter = filterAndRemoveDuplicates(dataApi[0].trackings)
+                    
+                    let dataFilter = filterAndRemoveDuplicates(dataApi[0].trackings, dataApi[0].shippingOrderType === 'PickupInPoint', dataApi[0].shippingOrderType === 'Regular')
                     dataFilter = {
                         ...dataFilter,
                         orderReferenceNumber: idOrder
@@ -84,7 +116,8 @@ function Trackings() {
                     setData(dataFilter)
                 }
             } catch (error) {
-                setError('Formato de código incorrecto. Ingrese formato "XXXXXXXXXXXX-XX"')
+                setError('Formato de código incorrecto. Ingrese formato "XXXXXXXXXXXXXXXXXX"')
+                console.log(error)
             } finally {
                 setLoading(false)
             }
@@ -95,17 +128,13 @@ function Trackings() {
 
     }, [idOrder])
 
-    const isTrackingActive = (dataIndex) => {
-        // const dataIndexValid = dataIndex >= 0 && dataIndex < data.filteredTrackings.length;
 
-        // if (!dataIndexValid) {
-        //     return false;
-        // }
-
-        const trackingData = data.filteredTrackings[dataIndex];
-        const isCompleted = trackingData.completed;
-        return isCompleted;
-    };
+    const trackingItemsTpl = data.filteredTrackings.map((step, index) => 
+        <li key={index} className={`flujoPedidosProfile_progressbar_bullet ${!isCancelled ? '' : 'red'} ${step.completed ? 'active' : ''}`} >
+            <span className='flujoPedidosProfile_progressbar_text'>{step.title}</span>
+            <span className='flujoPedidosProfile_progressbar_dateState'>{formatDate(step.createdOn)}</span>
+        </li>
+    );
 
     return (
 
@@ -132,33 +161,17 @@ function Trackings() {
                         :
                         (
                             error ? <Message msg={error} bgColor='#e74c3c' /> : data.filteredTrackings.length > 0 && (
-                                // <>
                                 <div className='flujoPedidosProfile_progressbar_content'>
                                     <div className='lujoPedidosProfile_progressbar_contentDetails'>
-                                        <h2 className='flujoPedidosProfile_progressbar_idPedido'>{data.orderReferenceNumber}</h2>
+                                        <p className='flujoPedidosProfile_progressbar_idPedido'>N° de pedido: {data.orderReferenceNumber}</p>
+                                        <p className='flujoPedidosProfile_progressbar_orderDate'>Fecha Realizada: {data.orderDate}</p>
                                     </div>
                                     <div className='lujoPedidosProfile_progressbar_contentTracking'>
                                         <ul className='flujoPedidosProfile_progressbar'>
-                                            <li className={`flujoPedidosProfile_progressbar_bullet ${isTrackingActive(1) ? 'red' : isTrackingActive(0) ? 'active' : ''}`}>
-                                                <span className={`flujoPedidosProfile_progressbar_text`}>Pedido Registrado</span>
-                                                {/* <span>{formatDate(data.filteredTrackings[0].createdOn)}</span> */}
-                                            </li>
-                                            <li className={`flujoPedidosProfile_progressbar_bullet ${isTrackingActive(1) ? 'red' : isTrackingActive(2) ? 'active' : ''}`}>
-                                                <span className='flujoPedidosProfile_progressbar_text'>Pedido confirmado</span>
-                                            </li>
-                                            <li className={`flujoPedidosProfile_progressbar_bullet ${isTrackingActive(1) ? 'red' : isTrackingActive(3) ? 'active' : ''}`}>
-                                                <span className='flujoPedidosProfile_progressbar_text'>Pedido listo para Recoger</span>
-                                            </li>
-                                            <li className={`flujoPedidosProfile_progressbar_bullet ${isTrackingActive(1) ? 'red' : isTrackingActive(5) ? 'active' : ''}`}>
-                                                <span className='flujoPedidosProfile_progressbar_text'>Pedido Entregado</span>
-                                            </li>
-                                            <li className={`flujoPedidosProfile_progressbar_bullet ${isTrackingActive(1) && 'red'}`}>
-                                                <span className='flujoPedidosProfile_progressbar_text'>Pedido cancelado</span>
-                                            </li>
+                                            {trackingItemsTpl}
                                         </ul>
                                     </div>
                                 </div>
-                                // </>
                             )
                         )
                 }
@@ -169,7 +182,3 @@ function Trackings() {
 }
 
 export default Trackings
-
-//                                            {data.filter((el) => (
-//    el.title === 'Nuevo pedido' && <span>{el.title}</span>
-//    ))}

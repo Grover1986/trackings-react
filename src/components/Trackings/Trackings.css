@@ -43,7 +43,7 @@
     line-height: 1.3;
     text-align: center;
     margin: auto;
-    margin-top: 5px;
+    padding-top: 1rem;
 }
 .flujoPedidosProfile_progressbar_dateState {
     color: #0F191E;
@@ -53,7 +53,6 @@
     letter-spacing: 0.086px;
 }
 .flujoPedidosProfile_searchWrap {
-    /* background-color: rgba(74,38,127, .2); */
     max-width: 910px;
     width: 100%;
     margin-left: auto;
@@ -121,6 +120,7 @@
     list-style-type: none;
     width: 100%;
     text-align: center;
+    /* transform: translateY(55px); */
 }
 .flujoPedidosProfile_progressbar_bullet::before {
     content: '';
@@ -137,6 +137,7 @@
     transition: all .8s;
     position: relative;
     z-index: 1;
+    transform: translateY(55px);
 }
 .flujoPedidosProfile_progressbar_bullet::after {
     content: '';
@@ -147,6 +148,7 @@
     top: 6px;
     left: 0;
     transition: all .8s;
+    transform: translateY(55px);
 }
 .flujoPedidosProfile_progressbar_bullet.active:not(:has(~ .active)):not(.red):before {
     border-color: #CFB2F9;
@@ -154,6 +156,13 @@
 }
 .flujoPedidosProfile_progressbar_bullet.active:not(:has(~ .active)):not(.red) .flujoPedidosProfile_progressbar_text {
     color: #4A267F;
+}
+.flujoPedidosProfile_progressbar_iconChannel {
+    position: relative;
+    bottom: .8rem;
+}
+.flujoPedidosProfile_progressbar_bullet.active:not(:has(~ .active)):not(.red) .flujoPedidosProfile_progressbar_iconChannel {   
+   filter: brightness(0) saturate(100%) invert(23%) sepia(74%) saturate(719%) hue-rotate(226deg) brightness(85%) contrast(106%);
 }
 .flujoPedidosProfile_progressbar_bullet.active:before {
     border-color: #fff;
@@ -164,6 +173,9 @@
     background-color: #009FE3;
     transition: all .8s;
   }
+.flujoPedidosProfile_progressbar_bullet.active .flujoPedidosProfile_progressbar_iconChannel {
+    filter: invert(44%) sepia(29%) saturate(4314%) hue-rotate(170deg) brightness(99%) contrast(101%);
+}
 .flujoPedidosProfile_progressbar_bullet.active .flujoPedidosProfile_progressbar_text {
     color: #009FE3;
 }
@@ -173,6 +185,9 @@
   }
   .flujoPedidosProfile_progressbar_bullet.red:after {
     background-color: red;
+  }
+  .flujoPedidosProfile_progressbar_bullet.red .flujoPedidosProfile_progressbar_iconChannel {
+    filter: brightness(0) saturate(100%) invert(45%) sepia(67%) saturate(4150%) hue-rotate(338deg) brightness(94%) contrast(92%);
   }
 .flujoPedidosProfile_progressbar_bullet.red .flujoPedidosProfile_progressbar_text {
     color: red;

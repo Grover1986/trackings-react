@@ -22,7 +22,7 @@ function Trackings() {
 
     const handleSubmit = (event) => {
         event.preventDefault()
- 
+
         if (value.trim() === '') {
             console.log('NO hay datos')
             setError('El campo no puede estar vacío')
@@ -44,16 +44,16 @@ function Trackings() {
     function filterAndRemoveDuplicates(trackings, isPickup, isDelivery) {
         setIsCancelled(false)
         const filteredTrackings = trackings.filter((tracking, index, self) => {
-            if(!isPickup && tracking.trackingTypeName === 'ReadyToPickUp') return false;
-            if(isPickup && tracking.trackingTypeName === 'InTransit') return false;
-            if(isDelivery && tracking.trackingTypeName === 'InProgress') return false;
+            if (!isPickup && tracking.trackingTypeName === 'ReadyToPickUp') return false;
+            if (isPickup && tracking.trackingTypeName === 'InTransit') return false;
+            if (isDelivery && tracking.trackingTypeName === 'InProgress') return false;
 
             // Filtrar los elementos con title diferente de "Envío correo"
             if (tracking.title !== "Envío correo" && tracking.title !== "En preparación" && tracking.title !== "Pedido rechazado") {
                 // Verificar si el elemento actual es el primer duplicado de title
                 const firstIndex = self.findIndex((t) => t.title === tracking.title);
                 let isFiltered = index === firstIndex;
-                if(isFiltered && tracking.trackingTypeName === 'Cancelled') setIsCancelled(true)
+                if (isFiltered && tracking.trackingTypeName === 'Cancelled') setIsCancelled(true)
                 return isFiltered;
             }
             return false;
@@ -69,20 +69,24 @@ function Trackings() {
         });
 
         const map = {
-            9: "Pedido Registrado",
-            1: "Pedido Confirmado",
-            5: "Pedido Entregado",
-            3: "Pedido Listo para Recoger",
-            4: "Pedido Cancelado",
-            2: (type) => {
-                return type ? "Pedido en Camino" : "Pedido Listo para Recoger" 
+            9: {title:'Pedido Registrado', icon: 'https://mercury.myvtex.com/arquivos/SVG_SET_Pedido-Registrado-icon.svg', alt: 'icon registrado'},
+            1: {title: 'Pedido Confirmado', icon: 'https://mercury.myvtex.com/arquivos/SVG_SET_Pedido-Confirmado-icon.svg', alt: 'icon confirmado'},
+            5: {title:'Pedido Entregado', icon: 'https://mercury.myvtex.com/arquivos/SVG_SET_Pedido-Entregado-icon.svg', alt: 'icon entregado'},
+            3: {title: 'Pedido Listo para Recoger', icon: 'https://mercury.myvtex.com/arquivos/SVG_SET_Pedido-Listo-para-Recoger-icon.svg', alt: 'icon listo para recoger'},
+            4: {title: "Pedido Cancelado", icon: 'https://mercury.myvtex.com/arquivos/SVG_SET_Pedido-Cancelado-icon.svg', alt: 'icon cancelado'},
+            2: {
+                title: (type) =>  type ? 'Pedido en Camino' : 'Pedido Listo para Recoger',
+                icon: (type) => type ? 'https://mercury.myvtex.com/arquivos/SVG_SET_Pedido-en-Camino-icon.svg' : 'https://mercury.myvtex.com/arquivos/SVG_SET_Pedido-Listo-para-Recoger-icon.svg',
+                alt: (type) => type ? 'icon en camino' : 'icon listo para recoger'
             }
-          }
-          console.log('filteredTrackings',filteredTrackings)
+        }
+        console.log('filteredTrackings', filteredTrackings)
         return {
             filteredTrackings: filteredTrackings.map((tracking) => ({
                 ...tracking,
-                title: typeof map[tracking.trackingType] === "string" ? map[tracking.trackingType] : map[tracking.trackingType](isDelivery)
+                title: typeof map[tracking.trackingType].title === "string" ? map[tracking.trackingType].title : map[tracking.trackingType].title(isDelivery),
+                icon: typeof map[tracking.trackingType].icon === "string" ? map[tracking.trackingType].icon : map[tracking.trackingType].icon(isDelivery),
+                alt: typeof map[tracking.trackingType].alt === "string" ? map[tracking.trackingType].alt : map[tracking.trackingType].alt(isDelivery)
             }))
         }
     }
@@ -105,8 +109,9 @@ function Trackings() {
                     const response = await fetch(`https://api-core-shopstar.azure-api.net/sales/orders/view-group//${idOrder}`, requestOptions);
                     const dataApi = await response.json();
                     console.log('DATA GENERAL: ', dataApi)
+                    console.log('FECHA: ', dataApi[0].orderDate)
                     console.log('TRACKINGS: ', dataApi[0].trackings)
-                    
+
                     let dataFilter = filterAndRemoveDuplicates(dataApi[0].trackings, dataApi[0].shippingOrderType === 'PickupInPoint', dataApi[0].shippingOrderType === 'Regular')
                     dataFilter = {
                         ...dataFilter,
@@ -129,10 +134,11 @@ function Trackings() {
     }, [idOrder])
 
 
-    const trackingItemsTpl = data.filteredTrackings.map((step, index) => 
+    const trackingItemsTpl = data.filteredTrackings.map((step, index) =>
         <li key={index} className={`flujoPedidosProfile_progressbar_bullet ${!isCancelled ? '' : 'red'} ${step.completed ? 'active' : ''}`} >
+            <img className='flujoPedidosProfile_progressbar_iconChannel' src={step.icon} alt={step.alt} />
             <span className='flujoPedidosProfile_progressbar_text'>{step.title}</span>
-            <span className='flujoPedidosProfile_progressbar_dateState'>{formatDate(step.createdOn)}</span>
+            {step.completed && <span className='flujoPedidosProfile_progressbar_dateState'>{formatDate(step.createdOn)}</span>}
         </li>
     );
 
@@ -156,25 +162,25 @@ function Trackings() {
                 </div>
             </div>
 
-                {
-                    loading ? (<Loader />)
-                        :
-                        (
-                            error ? <Message msg={error} bgColor='#e74c3c' /> : data.filteredTrackings.length > 0 && (
-                                <div className='flujoPedidosProfile_progressbar_content'>
-                                    <div className='lujoPedidosProfile_progressbar_contentDetails'>
-                                        <p className='flujoPedidosProfile_progressbar_idPedido'>N° de pedido: {data.orderReferenceNumber}</p>
-                                        <p className='flujoPedidosProfile_progressbar_orderDate'>Fecha Realizada: {data.orderDate}</p>
-                                    </div>
-                                    <div className='lujoPedidosProfile_progressbar_contentTracking'>
-                                        <ul className='flujoPedidosProfile_progressbar'>
-                                            {trackingItemsTpl}
-                                        </ul>
-                                    </div>
+            {
+                loading ? (<Loader />)
+                    :
+                    (
+                        error ? <Message msg={error} bgColor='#e74c3c' /> : data.filteredTrackings.length > 0 && (
+                            <div className='flujoPedidosProfile_progressbar_content'>
+                                <div className='lujoPedidosProfile_progressbar_contentDetails'>
+                                    <p className='flujoPedidosProfile_progressbar_idPedido'>N° de pedido: {data.orderReferenceNumber}</p>
+                                    <p className='flujoPedidosProfile_progressbar_orderDate'>Fecha Realizada: {data.orderDate}</p>
                                 </div>
-                            )
+                                <div className='lujoPedidosProfile_progressbar_contentTracking'>
+                                    <ul className='flujoPedidosProfile_progressbar'>
+                                        {trackingItemsTpl}
+                                    </ul>
+                                </div>
+                            </div>
                         )
-                }
+                    )
+            }
 
         </section>
 

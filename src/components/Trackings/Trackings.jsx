@@ -1,5 +1,5 @@
 import './Trackings.css'
-import { formatDate } from '../utils'
+import { formatDate, formatDateComplete } from '../utils'
 import { Loader } from '../Loader/Loader'
 import { Message } from '../Message'
 import { useState, useEffect } from 'react'
@@ -12,6 +12,11 @@ function Trackings() {
     const [error, setError] = useState(null)
     const [loading, setLoading] = useState(false)
     const [isCancelled, setIsCancelled] = useState(false)
+    const [orderDate, setOrderDate] = useState(null);
+    const [saleOrderItems, setSaleOrderItems] = useState(null);
+    const [sellerName, setSellerName] = useState(null);
+    const [shippingOrderType, setShippingOrderType] = useState(null);
+    const [shippingOrderDate, setShippingOrderDate] = useState(null);
 
     // esta función cambia de valor el value del Input
     const handleSearchChange = (event) => {
@@ -112,6 +117,22 @@ function Trackings() {
                     console.log('FECHA: ', dataApi[0].orderDate)
                     console.log('TRACKINGS: ', dataApi[0].trackings)
 
+                    if(dataApi.length >= 0) {
+                        const fechaPedido = dataApi[0].orderDate
+                        const elementosPedidoSale = dataApi[0].saleOrderItems
+                        const nombreVendedor = dataApi[0].sellerName
+                        const fechaEntrega = dataApi[0].shippingOrderDate
+                        const deliveryChannel = {
+                            delivery: {title: 'Envío a domicilio', icon: 'https://mercury.vteximg.com.br/arquivos/SVG_SET_Icon-Delivey-details.svg', alt: 'icon delivery'},
+                            pickup: {title: 'Retiro en tienda', icon: 'https://mercury.vteximg.com.br/arquivos/SVG_SET_Icon-Pickup-details.svg', alt: 'icon pickup'}
+                        }
+                        setOrderDate(fechaPedido)
+                        setSaleOrderItems(elementosPedidoSale)
+                        setSellerName(nombreVendedor)
+                        setShippingOrderDate(fechaEntrega)
+                        setShippingOrderType(dataApi[0].shippingOrderType === 'Regular' ? deliveryChannel.delivery : deliveryChannel.pickup)
+                    }
+
                     let dataFilter = filterAndRemoveDuplicates(dataApi[0].trackings, dataApi[0].shippingOrderType === 'PickupInPoint', dataApi[0].shippingOrderType === 'Regular')
                     dataFilter = {
                         ...dataFilter,
@@ -136,11 +157,25 @@ function Trackings() {
 
     const trackingItemsTpl = data.filteredTrackings.map((step, index) =>
         <li key={index} className={`flujoPedidosProfile_progressbar_bullet ${!isCancelled ? '' : 'red'} ${step.completed ? 'active' : ''}`} >
-            <img className='flujoPedidosProfile_progressbar_iconChannel' src={step.icon} alt={step.alt} />
+            <img className='flujoPedidosProfile_progressbar_iconChannel' width={44} height={44} src={step.icon} alt={step.alt} />
             <span className='flujoPedidosProfile_progressbar_text'>{step.title}</span>
-            {step.completed && <span className='flujoPedidosProfile_progressbar_dateState'>{formatDate(step.createdOn)}</span>}
+            {step.completed && !isCancelled ? <span className='flujoPedidosProfile_progressbar_dateState'>{formatDate(step.createdOn)}</span> : isCancelled && <span className='flujoPedidosProfile_progressbar_dateState'>{''}</span>}
         </li>
     );
+
+    const lastActiveTracking = data.filteredTrackings.filter((step) => step.completed);
+
+    let lastActiveStatusMessage = '';
+    
+    if (lastActiveTracking) {
+      if (lastActiveTracking.find(item => item.title === 'Pedido Registrado')) lastActiveStatusMessage = 'Registrado'
+      if (lastActiveTracking.find(item => item.title === 'Pedido Confirmado')) lastActiveStatusMessage = 'Confirmado'
+      if (lastActiveTracking.find(item => item.title === 'Pedido en Camino')) lastActiveStatusMessage = 'En camino'
+      if (lastActiveTracking.find(item => item.title === 'Pedido Entregado')) lastActiveStatusMessage = 'Entregado'
+      if (lastActiveTracking.find(item => item.title === 'Pedido Cancelado')) lastActiveStatusMessage = 'Cancelado'
+    }
+    
+    console.log('Último estado activo:', lastActiveStatusMessage);
 
     return (
 
@@ -168,11 +203,40 @@ function Trackings() {
                     (
                         error ? <Message msg={error} bgColor='#e74c3c' /> : data.filteredTrackings.length > 0 && (
                             <div className='flujoPedidosProfile_progressbar_content'>
-                                <div className='lujoPedidosProfile_progressbar_contentDetails'>
-                                    <p className='flujoPedidosProfile_progressbar_idPedido'>N° de pedido: {data.orderReferenceNumber}</p>
-                                    <p className='flujoPedidosProfile_progressbar_orderDate'>Fecha Realizada: {data.orderDate}</p>
+                                <div className='flujoPedidosProfile_progressbar_contentDetails'>
+                                    <h2 className='flujoPedidosProfile_progressbar_idPedido'>N° de pedido: 
+                                        <span className='flujoPedidosProfile_progressbar_textGruesita'>{data.orderReferenceNumber}</span>
+                                    </h2>
+                                    <h2 className='flujoPedidosProfile_progressbar_orderDate'>Fecha Realizada: 
+                                        <span className='flujoPedidosProfile_progressbar_textGruesita'>{formatDateComplete(orderDate)}</span>
+                                    </h2>
+                                    <div className='flujoPedidosProfile_progressbar_orderDetails'>
+                                        <div className='flujoPedidosProfile_progressbar_imageProductContent'>
+                                            <img className='flujoPedidosProfile_progressbar_imageProduct' src={saleOrderItems[0].productImage} alt="imagen producto" />
+                                        </div>
+                                        <div className='flujoPedidosProfile_progressbar_Info'>
+                                            <div className='flujoPedidosProfile_progressbar_infoProduct'>
+                                                <h3 className='flujoPedidosProfile_progressbar_productName'>{saleOrderItems[0].productName}</h3>
+                                                <span className='flujoPedidosProfile_progressbar_sellerName'>Vendido por {sellerName}</span>
+                                                <span className='flujoPedidosProfile_progressbar_quantity'>Cantidad: 
+                                                    <span className='flujoPedidosProfile_progressbar_quantityNumber'>{saleOrderItems[0].quantityToBeDelivered}</span>
+                                                </span>
+                                            </div>
+                                            {lastActiveTracking && (
+                                                <span className='flujoPedidosProfile_progressbar_lastStatusActive'>{lastActiveStatusMessage}</span>
+                                            )}
+                                            <div className='flujoPedidosProfile_progressbar_contentDeliveryDate'>
+                                                Fecha de entrega: <p className='flujoPedidosProfile_progressbar_deliveryDate'>{formatDateComplete(shippingOrderDate)}</p>
+                                            </div>
+                                            <div className='flujoPedidosProfile_progressbar_deliveryChannel'>
+                                                <img className='flujoPedidosProfile_progressbar_deliveryChannelIcon' src={shippingOrderType.icon} alt={shippingOrderType.alt} />
+                                                <span className='flujoPedidosProfile_progressbar_deliveryChannelText'>{shippingOrderType.title}</span>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div className='lujoPedidosProfile_progressbar_contentTracking'>
+                                <span className='flujoPedidosProfile_progressbar_line'></span>
+                                <div className='flujoPedidosProfile_progressbar_contentTracking'>
                                     <ul className='flujoPedidosProfile_progressbar'>
                                         {trackingItemsTpl}
                                     </ul>

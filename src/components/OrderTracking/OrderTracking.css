@@ -1,0 +1,335 @@
+.flujoPedidosProfile_progressbar_text {
+    font-size: 12px;
+    font-weight: 700;
+    color: #94DAF8;
+    height: 32px;
+    width: 100px;
+    display: block;
+    line-height: normal;
+    text-align: center;
+    margin: auto;
+    padding-top: 1rem;
+}
+.flujoPedidosProfile_progressbar_dateState {
+    color: #0F191E;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 16px;
+    letter-spacing: 0.086px;
+}
+.flujoPedidosProfile_progressbar_orderDetails {
+    display: flex;
+    column-gap: 10px;
+}
+.flujoPedidosProfile_progressbar_imageProductContent {
+    width: 45px;
+}
+.flujoPedidosProfile_progressbar_imageProduct {
+    width: 100%;
+    height: auto;
+}
+.flujoPedidosProfile_progressbar_line {
+    width: 1px;
+    height: 238px;
+    background: #D9DADB;
+}
+.flujoPedidosProfile_progressbar_content {
+    display: flex;
+    max-width: 1200px;
+    justify-content: space-between;
+    align-items: center;
+    margin: auto;
+    background-color: #fff;
+    border-radius: 5px;
+    height: 271px;
+    margin-bottom: 1rem;
+}
+.flujoPedidosProfile_progressbar_contentDetails {
+    width: 40%;
+    text-align: left;
+}
+.flujoPedidosProfile_progressbar_contentTracking {
+    width: 60%;
+    padding: 0 60px;
+}
+.flujoPedidosProfile_progressbar {
+    display: flex;
+    justify-content: center;
+    padding: 0;
+    margin: 0;
+}
+.flujoPedidosProfile_progressbar_bullet {
+    position: relative;
+    list-style-type: none;
+    width: 100%;
+    text-align: center;
+    /* transform: translateY(55px); */
+}
+.flujoPedidosProfile_progressbar_bullet::before {
+    content: '';
+    width: 16px;
+    height: 16px;
+    color: #CFEBF7;
+    font-weight: bold;
+    border: 1px solid #94DAF8;
+    background-color: #CFEBF7;
+    display: block;
+    text-align: center;
+    margin: auto;
+    border-radius: 50%;
+    transition: all .8s;
+    position: relative;
+    z-index: 1;
+    transform: translateY(55px);
+}
+.flujoPedidosProfile_progressbar_bullet::after {
+    content: '';
+    width: 100%;
+    height: 7px;
+    position: absolute;
+    background-color: #CFEBF7;
+    top: 6px;
+    left: 0;
+    transition: all .8s;
+    transform: translateY(55px);
+}
+.flujoPedidosProfile_progressbar_bullet.active:not(:has(~ .active)):not(.red):before {
+    border-color: #CFB2F9;
+    background-color: #4A267F;
+}
+.flujoPedidosProfile_progressbar_bullet.active:not(:has(~ .active)):not(.red) .flujoPedidosProfile_progressbar_text {
+    color: #4A267F;
+}
+.flujoPedidosProfile_progressbar_iconChannel {
+    position: relative;
+    bottom: .8rem;
+    display: block;
+    margin: auto;
+    width: 100%;
+}
+.flujoPedidosProfile_progressbar_bullet.active:not(:has(~ .active)):not(.red) .flujoPedidosProfile_progressbar_iconChannel {   
+   filter: brightness(0) saturate(100%) invert(23%) sepia(74%) saturate(719%) hue-rotate(226deg) brightness(85%) contrast(106%);
+}
+.flujoPedidosProfile_progressbar_bullet.active:before {
+    border-color: #fff;
+    background-color: #009FE3;
+    transition: all .8s;
+  }
+.flujoPedidosProfile_progressbar_bullet.active:after {
+    background-color: #009FE3;
+    transition: all .8s;
+  }
+.flujoPedidosProfile_progressbar_bullet.active .flujoPedidosProfile_progressbar_iconChannel {
+    filter: invert(44%) sepia(29%) saturate(4314%) hue-rotate(170deg) brightness(99%) contrast(101%);
+}
+.flujoPedidosProfile_progressbar_bullet.active .flujoPedidosProfile_progressbar_text {
+    color: #009FE3;
+}
+.flujoPedidosProfile_progressbar_bullet.red:before {
+    border-color: #EB0046;
+    background-color: #EB0046;
+  }
+  .flujoPedidosProfile_progressbar_bullet.red:after {
+    background-color: #EB0046;
+  }
+  .flujoPedidosProfile_progressbar_bullet.red .flujoPedidosProfile_progressbar_iconChannel {
+    filter: brightness(0) saturate(100%) invert(14%) sepia(96%) saturate(4381%) hue-rotate(334deg) brightness(89%) contrast(109%)    ;
+  }
+.flujoPedidosProfile_progressbar_bullet.red .flujoPedidosProfile_progressbar_text {
+    color: #EB0046;
+}
+/* Styles Details */
+.flujoPedidosProfile_progressbar_contentDetails {
+    color: #0F191E;
+    font-size: 12px;
+    padding: 1rem;
+}
+.flujoPedidosProfile_progressbar_idPedido,
+.flujoPedidosProfile_progressbar_orderDate {
+    font-weight: 500;
+    letter-spacing: 0.1px;
+    font-size: inherit;
+}
+.flujoPedidosProfile_progressbar_orderDate {
+    margin-bottom: 20px;
+}
+.flujoPedidosProfile_progressbar_infoProduct {
+    margin-bottom: 20px;
+}
+.flujoPedidosProfile_progressbar_productName {
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: -0.1px;
+    margin-top: 0;
+    margin-bottom: 3px;
+}
+.flujoPedidosProfile_progressbar_idPedido .flujoPedidosProfile_progressbar_textGruesita,
+.flujoPedidosProfile_progressbar_orderDate .flujoPedidosProfile_progressbar_textGruesita {
+    padding-left: 3px;
+}
+.flujoPedidosProfile_progressbar_textGruesita {
+    font-weight: 700;
+}
+.flujoPedidosProfile_progressbar_sellerName {
+    color: #878C8F;
+    font-weight: 400;
+    line-height: 18px;
+    margin-top: 2px;
+    display: block;
+    margin-bottom: 3px;
+}
+.flujoPedidosProfile_progressbar_quantity {
+    font-weight: 500;
+    line-height: 18px;
+    width: 70px;
+    display: flex;
+    justify-content: space-between;
+}
+.flujoPedidosProfile_progressbar_quantityNumber {
+    color: #878C8F;
+}
+.flujoPedidosProfile_progressbar_lastStatusActive {
+    display: block;
+    width: 95px;
+    height: 24px;
+    border-radius: 3px;
+    background: #CFEBF7;
+    color:#009FE3;
+    text-align: center;
+    font-weight: 700;
+    line-height: 24px;
+    letter-spacing: 0.086px;
+    margin-bottom: 10px;
+}
+.lastStatusActiveRed {
+    background-color: #FBCCDA;
+    color: #EB0046;
+}
+.flujoPedidosProfile_progressbar_contentDeliveryDate {
+    font-weight: 500;
+}
+.flujoPedidosProfile_progressbar_deliveryDate {
+    margin-top: 1px;
+    color: #009FE3;
+    font-weight: 700;
+    line-height: 16px;
+    letter-spacing: 0.086px;
+}
+.deliveryDateRed {
+    color: #EB0046;
+}
+.flujoPedidosProfile_progressbar_deliveryChannelIcon {
+    vertical-align: sub;
+    margin-right: 5px;
+}
+.flujoPedidosProfile_progressbar_deliveryChannelText {
+    font-weight: 500;
+}
+.flujoPedidosProfile_progressbar_idPedido {
+    margin-top: 0;
+}
+
+@media screen and (max-width: 1024px) {
+    .flujoPedidosProfile_progressbar_bullet {
+        width: 26%;
+    }
+    .flujoPedidosProfile_progressbar_deliveryChannel {
+        margin-bottom: 16px;
+    }
+    .flujoPedidosProfile_progressbar_idPedido {
+        margin-bottom: 0;
+        margin-top: revert;
+    }
+    .flujoPedidosProfile_progressbar_orderDate {
+        margin-top: 5px;
+    }
+    .flujoPedidosProfile_progressbar_contentDetails {
+        padding: 0 1rem;
+        height: auto; 
+    }
+}
+@media screen and (max-width: 955px) {
+    .flujoPedidosProfile_progressbar_content {
+        flex-direction: column;
+        max-width: 610px;
+        max-height: 416px;
+        height: 100%;
+        border: 1px solid #D9DADB;
+    }
+    .flujoPedidosProfile_progressbar_contentDetails {
+        width: auto;
+    }
+    .flujoPedidosProfile_progressbar_line {
+        width: 95%;
+        height: 1px;
+    }
+}
+@media screen and (max-width: 600px) {
+    .flujoPedidosProfile_progressbar_text {
+        width: auto;
+        font-size: 12px;
+    }
+}
+@media screen and (max-width: 567px) {
+    .flujoPedidosProfile_progressbar_contentTracking {
+        width: auto;
+        padding: 0 16px;
+        height: 33%;
+    }
+    .flujoPedidosProfile_progressbar_contentDetails {
+        width: -webkit-fill-available;
+    }
+}
+@media screen and (max-width: 425px) {
+    .flujoPedidosProfile_progressbar_text {
+        font-size: 11px;
+        line-height: normal;
+    }
+}
+@media screen and (max-width: 375px) {
+    .flujoPedidosProfile_progressbar_content {
+        max-width: none;
+    }
+    .flujoPedidosProfile_progressbar_bullet::before {
+        margin-bottom: 8px;
+    }
+    .flujoPedidosProfile_progressbar_text {
+        font-size: 9px;
+        height: 22px;
+        padding-top: .4rem;
+    }
+    .flujoPedidosProfile_progressbar_iconChannel {
+        width: 30px;
+    }
+    .flujoPedidosProfile_progressbar_dateState {
+        font-size: 10px;
+    }
+}
+@media screen and (max-width: 360px) {
+    .flujoPedidosProfile_progressbar_dateState {
+        font-size: 9px;
+    }
+}
+@media screen and (max-width: 320px) {
+    .flujoPedidosProfile_progressbar_dateState {
+        font-size: 8px;
+    }
+    .flujoPedidosProfile_progressbar_contentTracking {
+        height: 29.1%;
+    }
+    .flujoPedidosProfile_progressbar_contentDetails {
+        height: 70.9%;
+    }
+}
+@media screen and (max-width: 955px) and (min-width: 568px) {
+    .flujoPedidosProfile_progressbar_content {
+        max-height: 390px;
+    }
+    .flujoPedidosProfile_progressbar_contentTracking {
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+}

@@ -14,8 +14,7 @@ function Trackings() {
 
     // esta función cambia de valor el value del Input
     const handleSearchChange = (event) => {
-        // setValue(event.currentTarget.value.trim())
-        const trimmedValue = event.currentTarget.value.trim(); // Eliminar espacios en blanco extremos
+        const trimmedValue = event.currentTarget.value.trim();
         setValue(trimmedValue);
     }
 
@@ -35,8 +34,7 @@ function Trackings() {
 
     // esta función cambia de valor de idOrder
     const handleSubmitChange = () => {
-        // setIdOrder(value.trim())
-        const trimmedValue = value.trim(); // Eliminar espacios en blanco extremos
+        const trimmedValue = value.trim();
         setIdOrder(trimmedValue);
     }
 

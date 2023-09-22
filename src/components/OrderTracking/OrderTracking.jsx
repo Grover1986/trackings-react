@@ -1,7 +1,6 @@
 import './OrderTracking.css'
 import { formatDate, formatDateComplete } from '../utils'
 import { useState } from 'react'
-import { type } from '@testing-library/user-event/dist/type'
 
 
 export function OrderTracking(props) {
@@ -34,11 +33,8 @@ export function OrderTracking(props) {
         });
 
         filteredTrackings.sort((a, b) => {
-            // Si el título de 'a' es 'Pedido cancelado', colócalo al final.
             if (a.title === 'Pedido cancelado') return 1;
-            // Si el título de 'b' es 'Pedido cancelado', colócalo al principio.
             if (b.title === 'Pedido cancelado') return -1;
-            // En otros casos, mantén el orden original.
             return 0;
         });
 
@@ -111,8 +107,6 @@ export function OrderTracking(props) {
     console.log(saleOrderItems, typeof saleOrderItems);
 
 
-    if(!saleOrderItems || (typeof saleOrderItems === 'object' && saleOrderItems[0] === undefined)) return 'JAJAJAJ';
-
     return (
         saleOrderItems.map(item => (
             <div className='flujoPedidosProfile_progressbar_content'>
@@ -136,10 +130,10 @@ export function OrderTracking(props) {
                             </span>
                         </div>
                         {lastActiveTracking && (
-                            <span className='flujoPedidosProfile_progressbar_lastStatusActive'>{lastActiveStatusMessage}</span>
+                            <span className={`flujoPedidosProfile_progressbar_lastStatusActive ${isCancelled ? 'lastStatusActiveRed' : ''}`}>{lastActiveStatusMessage}</span>
                         )}
                         <div className='flujoPedidosProfile_progressbar_contentDeliveryDate'>
-                            Fecha de entrega: <p className='flujoPedidosProfile_progressbar_deliveryDate'>{formatDateComplete(shippingOrderDate)}</p>
+                            Fecha de entrega: <p className={`flujoPedidosProfile_progressbar_deliveryDate ${isCancelled ? 'deliveryDateRed' : ''}`}>{formatDateComplete(shippingOrderDate)}</p>
                         </div>
                         <div className='flujoPedidosProfile_progressbar_deliveryChannel'>
                             <img className='flujoPedidosProfile_progressbar_deliveryChannelIcon' src={shippingOrderType.icon} alt={shippingOrderType.alt} />

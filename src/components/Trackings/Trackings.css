@@ -189,6 +189,7 @@ body {
     bottom: .8rem;
     display: block;
     margin: auto;
+    width: 100%;
 }
 .flujoPedidosProfile_progressbar_bullet.active:not(:has(~ .active)):not(.red) .flujoPedidosProfile_progressbar_iconChannel {   
    filter: brightness(0) saturate(100%) invert(23%) sepia(74%) saturate(719%) hue-rotate(226deg) brightness(85%) contrast(106%);

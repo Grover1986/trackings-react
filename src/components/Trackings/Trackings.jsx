@@ -53,7 +53,7 @@ function Trackings() {
                 };
 
                 if (idOrder) {
-                    const response = await fetch(`https://api-core-shopstar.azure-api.net/sales/orders/view-group//${idOrder}`, requestOptions);
+                    const response = await fetch(`https://api-core-shopstar.azure-api.net/sales/orders/view-group/${idOrder}`, requestOptions);
                     const dataApi = await response.json();
 
                     setOrders(dataApi);

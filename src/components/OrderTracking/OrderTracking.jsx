@@ -16,25 +16,32 @@ export function OrderTracking(props) {
     function filterAndRemoveDuplicates(trackings, isPickup, isDelivery) {
         isCancelled = false
 
+        const uniqueTitles = new Set();
         const filteredTrackings = trackings.filter((tracking, index, self) => {
             if (!isPickup && tracking.trackingTypeName === 'ReadyToPickUp') return false;
             if (isPickup && tracking.trackingTypeName === 'InTransit') return false;
             if (isDelivery && tracking.trackingTypeName === 'InProgress') return false;
-
-            // Filtrar los elementos con title diferente de "Envío correo"
-            if (tracking.title !== "Envío correo" && tracking.title !== "En preparación" && tracking.title !== "Pedido rechazado" && tracking.title !== "Pedido invalido") {
+    
+            // Filtrar los elementos con title diferente de "Envío correo" y "En preparación"
+            if (tracking.title !== "Envío correo" && tracking.title !== "En preparación" && tracking.title !== "Pedido invalido") {
                 // Verificar si el elemento actual es el primer duplicado de title
                 const firstIndex = self.findIndex((t) => t.title === tracking.title);
                 let isFiltered = index === firstIndex;
-                if (isFiltered && tracking.trackingTypeName === 'Cancelled') isCancelled = true
+                if (isFiltered && tracking.trackingTypeName === 'Cancelled' || isFiltered && tracking.trackingTypeName === 'OrderInvalid') isCancelled = true
+    
+                // Si el título es "Pedido rechazado" y ya lo hemos visto antes, lo filtramos
+                if (tracking.title === 'Pedido rechazado' && uniqueTitles.has(tracking.title)) {
+                    return false;
+                }
+                uniqueTitles.add(tracking.title);
                 return isFiltered;
             }
             return false;
         });
 
         filteredTrackings.sort((a, b) => {
-            if (a.title === 'Pedido cancelado') return 1;
-            if (b.title === 'Pedido cancelado') return -1;
+            if (a.title === 'Pedido cancelado' || a.title === 'Pedido rechazado') return 1
+            if (b.title === 'Pedido cancelado' || b.title === 'Pedido rechazado') return -1
             return 0;
         });
 
@@ -44,6 +51,7 @@ export function OrderTracking(props) {
             5: { title: 'Pedido Entregado', icon: 'https://mercury.myvtex.com/arquivos/SVG_SET_Pedido-Entregado-icon.svg', alt: 'icon entregado' },
             3: { title: 'Pedido Listo para Recoger', icon: 'https://mercury.myvtex.com/arquivos/SVG_SET_Pedido-Listo-para-Recoger-icon.svg', alt: 'icon listo para recoger' },
             4: { title: "Pedido Cancelado", icon: 'https://mercury.myvtex.com/arquivos/SVG_SET_Pedido-Cancelado-icon.svg', alt: 'icon cancelado' },
+            8: { title: "Pedido Rechazado", icon: 'https://mercury.myvtex.com/arquivos/SVG_SET_Pedido-Cancelado-icon.svg', alt: 'icon rechazado' },
             2: {
                 title: (type) => type ? 'Pedido en Camino' : 'Pedido Listo para Recoger',
                 icon: (type) => type ? 'https://mercury.myvtex.com/arquivos/SVG_SET_Pedido-en-Camino-icon.svg' : 'https://mercury.myvtex.com/arquivos/SVG_SET_Pedido-Listo-para-Recoger-icon.svg',
@@ -101,6 +109,7 @@ export function OrderTracking(props) {
         if (lastActiveTracking.find(item => item.title === 'Pedido en Camino')) lastActiveStatusMessage = 'En camino'
         if (lastActiveTracking.find(item => item.title === 'Pedido Entregado')) lastActiveStatusMessage = 'Entregado'
         if (lastActiveTracking.find(item => item.title === 'Pedido Cancelado')) lastActiveStatusMessage = 'Cancelado'
+        if (lastActiveTracking.find(item => item.title === 'Pedido Rechazado')) lastActiveStatusMessage = 'Rechazado'
     }
 
     console.log('Último estado activo:', lastActiveStatusMessage);
